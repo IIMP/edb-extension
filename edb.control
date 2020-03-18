@@ -1,0 +1,4 @@
+comment = 'encrypt database module'
+default_version = '0.1'
+module_pathname = '$libdir/edb'
+relocatable = true
