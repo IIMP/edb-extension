@@ -31,6 +31,11 @@ void h2be4(int32_t value, uint8_t *output);
 int encrypt_value(uint8_t *input, size_t input_size, uint8_t *&output);
 
 int decrypt_value(uint8_t *input, size_t input_size, uint8_t *&output);
+
 } // namespace edb
+
+int printf(const char* fmt, ...);
+//int ecall_encrypt_value(uint8_t *input, size_t input_size, char *output);
+//int ecall_decrypt_value(uint8_t *input, size_t input_size, char *output);
 
 #endif /* ifndef EDB_VALUE_UTILS_H_ */

@@ -2,14 +2,14 @@ enclave {
 
     trusted {
         public int ec_text_cmp([in, count=lhs_size] uint8_t *lhs, size_t lhs_size,
-                        [in, count=rhs_size] uint8_t *rhs, size_t rhs_size);
+                        [in, count=rhs_size] uint8_t *rhs, size_t rhs_size) transition_using_threads;
 
         public size_t ec_text_concat([in, count=lhs_size] uint8_t *lhs, size_t lhs_size,
                               [in, count=rhs_size] uint8_t *rhs, size_t rhs_size,
-                              [out, count=result_size] uint8_t *result, size_t result_size);
+                              [out, count=result_size] uint8_t *result, size_t result_size) transition_using_threads;
 
         public int ec_text_match_like([in, count=text_size] uint8_t *text, size_t text_size,
-                              [in, count=pattern_size] uint8_t *pattern, size_t pattern_size);
+                              [in, count=pattern_size] uint8_t *pattern, size_t pattern_size) transition_using_threads;
     };
 
 };

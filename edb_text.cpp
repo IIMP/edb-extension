@@ -9,6 +9,21 @@ extern "C" {
 
 extern "C" {
 
+#ifdef DEBUG_MODE
+PG_FUNCTION_INFO_V1(edb_text_in);
+Datum edb_text_in(PG_FUNCTION_ARGS) {
+    const char *str = PG_GETARG_CSTRING(0);
+    size_t str_len = strlen(str);
+    return edb::edb_value_in(str, str_len);
+}
+
+PG_FUNCTION_INFO_V1(edb_text_out);
+Datum edb_text_out(PG_FUNCTION_ARGS) {
+    bytea *data = PG_GETARG_BYTEA_PP(0);
+    size_t data_size = VARSIZE_ANY_EXHDR(data);
+    return edb::edb_value_out(VARDATA(data), data_size);
+}
+#else
 PG_FUNCTION_INFO_V1(edb_text_in);
 Datum edb_text_in(PG_FUNCTION_ARGS) {
     return edb::edb_value_in(PG_GETARG_DATUM(0));
@@ -18,6 +33,7 @@ PG_FUNCTION_INFO_V1(edb_text_out);
 Datum edb_text_out(PG_FUNCTION_ARGS) {
     return edb::edb_value_out(PG_GETARG_DATUM(0));
 }
+#endif
 
 PG_FUNCTION_INFO_V1(edb_text_eq);
 Datum edb_text_eq(PG_FUNCTION_ARGS) {
@@ -99,17 +115,17 @@ Datum edb_text_concat(PG_FUNCTION_ARGS) {
 
 PG_FUNCTION_INFO_V1(edb_text_like);
 Datum edb_text_like(PG_FUNCTION_ARGS) {
-    Datum text = PG_GETARG_DATUM(0);
+    Datum etext = PG_GETARG_DATUM(0);
     Datum pattern = PG_GETARG_DATUM(1);
 
-    PG_RETURN_BOOL(edb::text_match_like(text, pattern));
+    PG_RETURN_BOOL(edb::text_match_like(etext, pattern));
 }
 
 PG_FUNCTION_INFO_V1(edb_text_notlike);
 Datum edb_text_notlike(PG_FUNCTION_ARGS) {
-    Datum text = PG_GETARG_DATUM(0);
+    Datum etext = PG_GETARG_DATUM(0);
     Datum pattern = PG_GETARG_DATUM(1);
 
-    PG_RETURN_BOOL(!edb::text_match_like(text, pattern));
+    PG_RETURN_BOOL(!edb::text_match_like(etext, pattern));
 }
 }

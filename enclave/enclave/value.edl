@@ -1,0 +1,12 @@
+enclave {
+
+    trusted {
+        public int ecall_encrypt_value([in, count=input_size] uint8_t *input, size_t input_size, 
+                [user_check] char *output);
+        public int ecall_decrypt_value([in, count=input_size] uint8_t *input, size_t input_size, 
+                [user_check] char *output);
+    };
+    untrusted {
+        void ocall_print_string([in, string] const char *str);
+    };
+};

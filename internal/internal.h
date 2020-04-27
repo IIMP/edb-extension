@@ -21,10 +21,13 @@ constexpr size_t kMinDataSize =
     crypto::kAES128IVSize + crypto::kAES128BlockSize;
 
 sgx_enclave_id_t get_edb_enclave_id();
-
+#ifdef DEBUG_MODE
+Datum edb_value_in(const char *value_in, size_t value_size);
+Datum edb_value_out(const char *value_in, size_t value_size);
+#else
 Datum edb_value_in(Datum value);
-
 Datum edb_value_out(Datum value);
+#endif
 
 using sgx_value_comparator = sgx_status_t (*)(sgx_enclave_id_t eid, int *ret,
                                               uint8_t *lhs, size_t lhs_size,

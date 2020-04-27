@@ -74,7 +74,7 @@ else
         SGX_COMMON_FLAGS += -O2
 endif
 
-SGX_COMMON_FLAGS += -D ENCRYPT_KEY=\"$(ENCRYPT_KEY)\" -DSGX_ENABLE
+SGX_COMMON_FLAGS += -D ENCRYPT_KEY=\"$(ENCRYPT_KEY)\" -DSGX_ENABLE -DDEBUG_MODE
 SGX_COMMON_FLAGS += -Wall -Wextra -Winit-self -Wpointer-arith -Wreturn-type \
                     -Waddress -Wsequence-point -Wformat-security \
                     -Wmissing-include-dirs -Wfloat-equal -Wundef -Wshadow \
@@ -139,7 +139,7 @@ Enclave_Security_Link_Flags := -Wl,-z,relro,-z,now,-z,noexecstack
 # Otherwise, you may get some undesirable errors.
 Enclave_Link_Flags := $(Enclave_Security_Link_Flags) \
     -Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles -L$(SGX_LIBRARY_PATH) -L$(SGX_SSL_LIBRARY_PATH) \
-	-Wl,--whole-archive -l$(Trts_Library_Name) -Wl,--no-whole-archive \
+	-Wl,--whole-archive  -lsgx_tswitchless -l$(Trts_Library_Name) -Wl,--no-whole-archive \
 	-Wl,--start-group -lsgx_tstdc -lsgx_tcxx -l$(Crypto_Library_Name) -l$(Service_Library_Name) -lsgx_tsgxssl -lsgx_tsgxssl_crypto -Wl,--end-group \
 	-Wl,-Bstatic -Wl,-Bsymbolic -Wl,--no-undefined \
 	-Wl,-pie,-eenclave_entry -Wl,--export-dynamic  \

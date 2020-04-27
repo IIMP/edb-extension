@@ -4,11 +4,17 @@
 -- 80 EyhUppPzvC82jqnwih/RSekCx9fclsUiTX2Var4mTCE=
 -- 231 Rp1c6rrc9XKgQnDLtxA1TWL9ZHQGU0ecgK2xrWLuEYQ=
 -- 25 rU5tle2MYizh3n3WgzG3dAXkGtccwSNKqvu6syvu+wQ=
+
+-- 12 NsH5kAZhO7yhmBMDx5AIPo6h9vF8I97WNWG9qeW3W3k=
+-- 44 /0pmN7DLvqxOiyEUjmNXxJVLz/7VWh65bsVn2hkXZ4A=
+-- 829 JFBVKrKQ5lMo+VbwiV8uiCcBdMP6qwmK42MSgnu6fKQ=
+-- 103 qZTAWV9+Bq4JJ8KXihlcruO4As16BRkN4r45CB9bp/c=
 ---------------------------------------------------
 -- 490 bTlbO7W/LmzE2NOxQi2A1U2kEmwVeajAsD07rTRrKbA=
 -- 81 uiAj53GB3zECPwzPyVslDmEDvGK7VSU4dLOP0FtMZkg=
 -- 2 MLBIsLwee2LgkvvCE6j+Cbg2CaFm+uQf9uAo5hdTPzs=
 -- 456533 EUinrezRA14SKjupeZl9chxUeHzf0GD2uxJSo0QND6E=
+
 
 
 -- 77 + 3 = 80
@@ -63,6 +69,14 @@ INSERT INTO test_int_agg(value) VALUES
     ('EyhUppPzvC82jqnwih/RSekCx9fclsUiTX2Var4mTCE='),
     ('Rp1c6rrc9XKgQnDLtxA1TWL9ZHQGU0ecgK2xrWLuEYQ='),
     ('rU5tle2MYizh3n3WgzG3dAXkGtccwSNKqvu6syvu+wQ=');
+
+INSERT INTO test_int_agg(value) VALUES
+('NsH5kAZhO7yhmBMDx5AIPo6h9vF8I97WNWG9qeW3W3k='),
+('/0pmN7DLvqxOiyEUjmNXxJVLz/7VWh65bsVn2hkXZ4A='),
+('JFBVKrKQ5lMo+VbwiV8uiCcBdMP6qwmK42MSgnu6fKQ='),
+('qZTAWV9+Bq4JJ8KXihlcruO4As16BRkN4r45CB9bp/c=');
+
+
 
 SELECT MIN(value) = 'ZlRCI8EMwSkpD1vo4zlv2KA3KmaZH9sBPJOFG6261F8='::edb_int4 FROM test_int_agg;
 SELECT MAX(value) = 'Rp1c6rrc9XKgQnDLtxA1TWL9ZHQGU0ecgK2xrWLuEYQ='::edb_int4 FROM test_int_agg;

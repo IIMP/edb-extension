@@ -3,9 +3,10 @@ enclave {
          sgx_thread_set_untrusted_event_ocall,
          sgx_thread_setwait_untrusted_events_ocall,
          sgx_thread_set_multiple_untrusted_events_ocall;
-
+    
     from "int4.edl" import *;
     from "float4.edl" import *;
     from "text.edl" import *;
+    from "value.edl" import *;
 
 };

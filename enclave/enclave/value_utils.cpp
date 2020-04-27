@@ -1,3 +1,4 @@
+#include "enclave_t.h"
 #include "value_utils.h"
 
 #include <cstring>
@@ -64,3 +65,51 @@ int decrypt_value(uint8_t *input, size_t input_size, uint8_t *&output) {
     return dec_len;
 }
 } // namespace edb
+
+int ecall_encrypt_value(uint8_t *input, size_t input_size, char *output) {
+    uint8_t *out;
+    char debug_buffer[128];
+    int debug_len;
+    int len;
+
+    len = edb::encrypt_value(input, input_size, out);
+    if(len <= 0)
+        return len;
+    debug_len = snprintf(debug_buffer, 128, "output size: %d output:", len);
+    for(int i=0; i<len; i++) {
+        debug_len += snprintf(debug_buffer + debug_len, 128-debug_len, "%02x", out[i]);
+    }
+    printf("%s", debug_buffer);
+    memcpy(output, out, len);
+    return len;
+}
+
+int ecall_decrypt_value(uint8_t *input, size_t input_size, char *output) {
+    uint8_t *out;
+    char debug_buffer[128];
+    int debug_len;
+    int len;
+
+    debug_len = snprintf(debug_buffer, 128, "input size: %d input:", input_size);
+    for(int i=0; i<input_size; i++) {
+        debug_len += snprintf(debug_buffer + debug_len, 128-debug_len, "%02x", input[i]);
+    }
+    printf("%s", debug_buffer);
+    len = edb::decrypt_value(input, input_size, out);
+    printf("Decrypted result: %d, len: %d", *((int *)out), len);
+    if(len <= 0)
+        return len;
+    memcpy(output, out, len);
+    return len;
+}
+
+int printf(const char* fmt, ...)
+{
+    char buf[BUFSIZ] = { '\0' };
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(buf, BUFSIZ, fmt, ap);
+    va_end(ap);
+    ocall_print_string(buf);
+    return (int)strnlen(buf, BUFSIZ - 1) + 1;
+}

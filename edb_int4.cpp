@@ -10,6 +10,48 @@ extern "C" {
 
 extern "C" {
 
+#ifdef DEBUG_MODE
+
+PG_FUNCTION_INFO_V1(edb_int4_in);
+Datum edb_int4_in(PG_FUNCTION_ARGS) {
+    const char *str = PG_GETARG_CSTRING(0);
+    int32 num = pg_strtoint32(str);
+    
+
+    //return edb::edb_value_in((const char *)&num, sizeof(int32));
+    char debug_buffer[128];
+    int debug_len = 0;
+    bytea *data = (bytea *)edb::edb_value_in((const char *)&num, sizeof(int32));
+    for(int i=0; i<VARSIZE(data); i++) {
+        debug_len += snprintf(debug_buffer + debug_len, 128-debug_len, "%02x", ((uint8_t *)data)[i]);
+    }
+    ereport(INFO, (errmsg("%s", debug_buffer)));
+    return (Datum)data;
+}
+
+PG_FUNCTION_INFO_V1(edb_int4_out);
+Datum edb_int4_out(PG_FUNCTION_ARGS) {
+    bytea *data = PG_GETARG_BYTEA_PP(0);
+    size_t data_size = VARSIZE_ANY_EXHDR(data);
+    char *str = reinterpret_cast<char *>(palloc(12));
+
+    char debug_buffer[128];
+    int debug_len = 0;
+    for(int i=0; i<VARSIZE(data); i++) {
+        debug_len += snprintf(debug_buffer + debug_len, 128-debug_len, "%02x", ((uint8_t *)data)[i]);
+    }
+    ereport(INFO, (errmsg("%s", debug_buffer)));
+
+    Datum data_out = edb::edb_value_out(VARDATA(data), data_size);
+    //sprintf(str, "%d", *((int *)data_out));
+    pg_ltoa(*((int32 *)data_out), str);
+    pfree((char *)data_out);
+    ereport(INFO, (errmsg("decrypte value: DEC(%s)", str)));
+    PG_RETURN_CSTRING(str);
+}
+
+#else
+
 PG_FUNCTION_INFO_V1(edb_int4_in);
 Datum edb_int4_in(PG_FUNCTION_ARGS) {
     return edb::edb_value_in(PG_GETARG_DATUM(0));
@@ -19,6 +61,8 @@ PG_FUNCTION_INFO_V1(edb_int4_out);
 Datum edb_int4_out(PG_FUNCTION_ARGS) {
     return edb::edb_value_out(PG_GETARG_DATUM(0));
 }
+
+#endif
 
 PG_FUNCTION_INFO_V1(edb_int4_cmp);
 Datum edb_int4_cmp(PG_FUNCTION_ARGS) {
