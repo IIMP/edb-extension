@@ -68,35 +68,44 @@ int decrypt_value(uint8_t *input, size_t input_size, uint8_t *&output) {
 
 int ecall_encrypt_value(uint8_t *input, size_t input_size, char *output) {
     uint8_t *out;
+    int len;
+#if 0
     char debug_buffer[128];
     int debug_len;
-    int len;
-
+#endif
     len = edb::encrypt_value(input, input_size, out);
-    if(len <= 0)
-        return len;
+    if(len <= 0) {
+         return len;
+    }
+#if 0
     debug_len = snprintf(debug_buffer, 128, "output size: %d output:", len);
     for(int i=0; i<len; i++) {
         debug_len += snprintf(debug_buffer + debug_len, 128-debug_len, "%02x", out[i]);
     }
     printf("%s", debug_buffer);
+#endif
     memcpy(output, out, len);
     return len;
 }
 
 int ecall_decrypt_value(uint8_t *input, size_t input_size, char *output) {
     uint8_t *out;
+    int len;
+#if 0
     char debug_buffer[128];
     int debug_len;
-    int len;
+#endif
+    
 
+#if 0
     debug_len = snprintf(debug_buffer, 128, "input size: %d input:", input_size);
     for(int i=0; i<input_size; i++) {
         debug_len += snprintf(debug_buffer + debug_len, 128-debug_len, "%02x", input[i]);
     }
     printf("%s", debug_buffer);
+#endif
     len = edb::decrypt_value(input, input_size, out);
-    printf("Decrypted result: %d, len: %d", *((int *)out), len);
+    //printf("Decrypted result: %d, len: %d", *((int *)out), len);
     if(len <= 0)
         return len;
     memcpy(output, out, len);

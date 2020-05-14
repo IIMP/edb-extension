@@ -181,9 +181,9 @@ Datum edb_value_in(const char *value_in, size_t value_size) {
     bytea *value_out;
 
     if(rem_size == 0) {
-        data_size = value_size + AES_BLOCK_SIZE;
+        data_size = value_size + (2 * AES_BLOCK_SIZE);
     } else {
-        data_size = value_size + AES_BLOCK_SIZE - rem_size;
+        data_size = value_size + (2 * AES_BLOCK_SIZE) - rem_size;
     }
     //ereport(INFO, (errmsg("encrypte value: ENC(%d)  Len:%d", *((int *)value_in), data_size)));
 
@@ -207,7 +207,7 @@ Datum edb_value_out(const char *value_in, size_t value_size) {
         ereport(ERROR, (errmsg("decrypt value error, status(%08x) ret(%d).",
                                status, data_size)));
     }
-    ereport(INFO, (errmsg("decrypte value: DEC(%d)  Len:%d", *((int *)value_out), data_size)));
+    //ereport(INFO, (errmsg("decrypte value: DEC(%d)  Len:%d", *((int *)value_out), data_size)));
     PG_RETURN_CSTRING(value_out);
 }
 #else

@@ -17,7 +17,20 @@ CREATE TYPE edb_int4 (
     OUTPUT = edb_int4_out
 );
 
+CREATE FUNCTION edb_int4(int4) RETURNS edb_int4
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/edb', 'int4_to_edb_int4';
 
+CREATE FUNCTION edb_int4(int8) RETURNS edb_int4
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/edb', 'int8_to_edb_int4';
+
+CREATE CAST (int4 AS edb_int4) WITH FUNCTION edb_int4(int4) AS ASSIGNMENT;
+CREATE CAST (int8 AS edb_int4) WITH FUNCTION edb_int4(int8) AS ASSIGNMENT;
 CREATE CAST (edb_int4 AS text) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (text AS edb_int4) WITH INOUT AS ASSIGNMENT;
 
@@ -283,7 +296,41 @@ CREATE TYPE edb_float4 (
     OUTPUT = edb_float4_out
 );
 
+CREATE FUNCTION edb_float4(float4) RETURNS edb_float4
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/edb', 'float4_to_edb_float4';
 
+CREATE FUNCTION edb_float4(double precision) RETURNS edb_float4
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/edb', 'double_to_edb_float4';
+
+CREATE FUNCTION edb_float4(numeric) RETURNS edb_float4
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/edb', 'numeric_to_edb_float4';
+
+CREATE FUNCTION edb_float4(int4) RETURNS edb_float4
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/edb', 'int4_to_edb_float4';
+
+CREATE FUNCTION edb_float4(int8) RETURNS edb_float4
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/edb', 'int8_to_edb_float4';
+
+CREATE CAST (float4 AS edb_float4) WITH FUNCTION edb_float4(float4) AS ASSIGNMENT;
+CREATE CAST (double precision AS edb_float4) WITH FUNCTION edb_float4(double precision) AS ASSIGNMENT;
+CREATE CAST (numeric AS edb_float4) WITH FUNCTION edb_float4(numeric) AS ASSIGNMENT;
+CREATE CAST (int4 AS edb_float4) WITH FUNCTION edb_float4(int4) AS ASSIGNMENT;
+CREATE CAST (int8 AS edb_float4) WITH FUNCTION edb_float4(int8) AS ASSIGNMENT;
 CREATE CAST (edb_float4 AS text) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (text AS edb_float4) WITH INOUT AS ASSIGNMENT;
 
@@ -548,7 +595,13 @@ CREATE TYPE edb_text (
     OUTPUT = edb_text_out
 );
 
+CREATE FUNCTION edb_text(varchar) RETURNS edb_text
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/edb', 'varchar_to_edb_text';
 
+CREATE CAST (varchar AS edb_text) WITH FUNCTION edb_text(varchar) AS ASSIGNMENT;
 CREATE CAST (edb_text AS text) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (text AS edb_text) WITH INOUT AS ASSIGNMENT;
 

@@ -2,11 +2,11 @@ enclave {
 
     trusted {
         public int ecall_encrypt_value([in, count=input_size] uint8_t *input, size_t input_size, 
-                [user_check] char *output);
+                [user_check] char *output) transition_using_threads;
         public int ecall_decrypt_value([in, count=input_size] uint8_t *input, size_t input_size, 
-                [user_check] char *output);
+                [user_check] char *output) transition_using_threads;
     };
     untrusted {
-        void ocall_print_string([in, string] const char *str);
+        void ocall_print_string([in, string] const char *str) transition_using_threads;
     };
 };

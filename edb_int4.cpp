@@ -16,9 +16,10 @@ PG_FUNCTION_INFO_V1(edb_int4_in);
 Datum edb_int4_in(PG_FUNCTION_ARGS) {
     const char *str = PG_GETARG_CSTRING(0);
     int32 num = pg_strtoint32(str);
+    //int32 num = PG_GETARG_INT32(0);
     
-
-    //return edb::edb_value_in((const char *)&num, sizeof(int32));
+    return edb::edb_value_in((const char *)&num, sizeof(int32));
+#if 0
     char debug_buffer[128];
     int debug_len = 0;
     bytea *data = (bytea *)edb::edb_value_in((const char *)&num, sizeof(int32));
@@ -27,6 +28,7 @@ Datum edb_int4_in(PG_FUNCTION_ARGS) {
     }
     ereport(INFO, (errmsg("%s", debug_buffer)));
     return (Datum)data;
+#endif
 }
 
 PG_FUNCTION_INFO_V1(edb_int4_out);
@@ -34,21 +36,39 @@ Datum edb_int4_out(PG_FUNCTION_ARGS) {
     bytea *data = PG_GETARG_BYTEA_PP(0);
     size_t data_size = VARSIZE_ANY_EXHDR(data);
     char *str = reinterpret_cast<char *>(palloc(12));
-
+#if 0
     char debug_buffer[128];
     int debug_len = 0;
     for(int i=0; i<VARSIZE(data); i++) {
         debug_len += snprintf(debug_buffer + debug_len, 128-debug_len, "%02x", ((uint8_t *)data)[i]);
     }
     ereport(INFO, (errmsg("%s", debug_buffer)));
-
+#endif
     Datum data_out = edb::edb_value_out(VARDATA(data), data_size);
     //sprintf(str, "%d", *((int *)data_out));
     pg_ltoa(*((int32 *)data_out), str);
     pfree((char *)data_out);
-    ereport(INFO, (errmsg("decrypte value: DEC(%s)", str)));
+    //ereport(INFO, (errmsg("decrypte value: DEC(%s)", str)));
     PG_RETURN_CSTRING(str);
 }
+
+PG_FUNCTION_INFO_V1(int4_to_edb_int4);
+Datum int4_to_edb_int4(PG_FUNCTION_ARGS) {
+    int32 num = PG_GETARG_INT32(0);
+
+    return edb::edb_value_in((const char *)&num, sizeof(int32));
+}
+
+PG_FUNCTION_INFO_V1(int8_to_edb_int4);
+Datum int8_to_edb_int4(PG_FUNCTION_ARGS) {
+    int64 num = PG_GETARG_INT64(0);
+    if (num < INT32_MIN || num > INT32_MAX)
+            ereport(ERROR, (errmsg("value \"%li\" is out of range for type %s", num, "integer")));
+    int32 num32 = num;
+
+    return edb::edb_value_in((const char *)&num32, sizeof(int32));
+}
+
 
 #else
 

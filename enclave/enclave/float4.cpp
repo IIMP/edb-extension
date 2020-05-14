@@ -9,6 +9,19 @@
 
 static inline bool check_float4_len(size_t len) { return len == sizeof(float); }
 
+#if 0
+        int32_t a = be2h4(lhs_dec);                                            
+        int32_t b = be2h4(rhs_dec);                                            
+        float val = op(*reinterpret_cast<float *>(&a),                         
+                       *reinterpret_cast<float *>(&b));                        
+                                                                               
+        uint8_t beval[sizeof(int32_t)];                                        
+        h2be4(*reinterpret_cast<int32_t *>(&val), beval);                      
+                                                                               
+        uint8_t *enc;                                                          
+        int enc_len = encrypt_value(beval, sizeof(beval), enc);                
+#endif
+
 #define DEFINE_FLOAT4_FUNC(name, op)                                           \
     int ec_float4_##name(uint8_t *lhs, size_t lhs_size, uint8_t *rhs,          \
                          size_t rhs_size, uint8_t *result,                     \
@@ -38,16 +51,9 @@ static inline bool check_float4_len(size_t len) { return len == sizeof(float); }
         if (!check_float4_len(rhs_dec_len))                                    \
             return -1;                                                         \
                                                                                \
-        int32_t a = be2h4(lhs_dec);                                            \
-        int32_t b = be2h4(rhs_dec);                                            \
-        float val = op(*reinterpret_cast<float *>(&a),                         \
-                       *reinterpret_cast<float *>(&b));                        \
-                                                                               \
-        uint8_t beval[sizeof(int32_t)];                                        \
-        h2be4(*reinterpret_cast<int32_t *>(&val), beval);                      \
-                                                                               \
+        float val = op(*(float *)lhs_dec, *(float *)rhs_dec);                  \
         uint8_t *enc;                                                          \
-        int enc_len = encrypt_value(beval, sizeof(beval), enc);                \
+        int enc_len = encrypt_value((uint8_t *)&val, sizeof(float), enc);      \
         if (enc_len < 0)                                                       \
             return -1;                                                         \
         auto enc_sp = make_scope_ptr(enc);                                     \
@@ -98,10 +104,13 @@ int ec_float4_cmp(uint8_t *lhs, size_t lhs_size, uint8_t *rhs,
 
     if (!check_float4_len(rhs_dec_len))
         return EDB_CMP_ERR;
-
+#if 0
     int32_t a = be2h4(lhs_dec);
     int32_t b = be2h4(rhs_dec);
+    printf("float compare: %f %f %f %f\n", *reinterpret_cast<float *>(&a), *reinterpret_cast<float *>(&b), *(float *)lhs_dec, *(float *)rhs_dec);
     float ret = *reinterpret_cast<float *>(&a) - *reinterpret_cast<float *>(&b);
+#endif
+    float ret = *(float *)lhs_dec - *(float *)rhs_dec;
 
     return ret < 0 ? -1 : (ret > 0 ? 1 : 0);
 }

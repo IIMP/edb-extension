@@ -9,6 +9,18 @@
 
 static inline bool check_int4_len(size_t len) { return len == sizeof(int32_t); }
 
+#if 0
+        int32_t a = be2h4(lhs_dec);                                            
+        int32_t b = be2h4(rhs_dec);                                            \
+        int32_t val = op(a, b);                                                \
+                                                                               \
+        uint8_t beval[sizeof(int32_t)];                                        \
+        h2be4(val, beval);                                                     \
+                                                                               \
+        uint8_t *enc;                                                          \
+        int enc_len = encrypt_value(beval, sizeof(beval), enc);                
+#endif
+
 #define DEFINE_INT4_FUNC(name, op)                                             \
     int ec_int4_##name(uint8_t *lhs, size_t lhs_size, uint8_t *rhs,            \
                        size_t rhs_size, uint8_t *result, size_t result_size) { \
@@ -37,15 +49,9 @@ static inline bool check_int4_len(size_t len) { return len == sizeof(int32_t); }
         if (!check_int4_len(rhs_dec_len))                                      \
             return -1;                                                         \
                                                                                \
-        int32_t a = be2h4(lhs_dec);                                            \
-        int32_t b = be2h4(rhs_dec);                                            \
-        int32_t val = op(a, b);                                                \
-                                                                               \
-        uint8_t beval[sizeof(int32_t)];                                        \
-        h2be4(val, beval);                                                     \
-                                                                               \
+        int32_t val = op(*(int32_t *)lhs_dec, *(int32_t *)rhs_dec);            \
         uint8_t *enc;                                                          \
-        int enc_len = encrypt_value(beval, sizeof(beval), enc);                \
+        int enc_len = encrypt_value((uint8_t *)&val, sizeof(int32_t), enc);    \
         if (enc_len < 0)                                                       \
             return -1;                                                         \
         auto enc_sp = make_scope_ptr(enc);                                     \
@@ -95,11 +101,13 @@ int ec_int4_cmp(uint8_t *lhs, size_t lhs_size, uint8_t *rhs, size_t rhs_size) {
 
     if (!check_int4_len(rhs_dec_len))
         return EDB_CMP_ERR;
-
+#if 0
     int32_t a = be2h4(lhs_dec);
     int32_t b = be2h4(rhs_dec);
     int32_t ret = a - b;
-
+#endif
+    int32_t ret = *(int32_t *)lhs_dec - *(int32_t *)rhs_dec;
+    
     return (ret == 0) ? 0 : (ret < 0 ? -1 : 1);
 }
 

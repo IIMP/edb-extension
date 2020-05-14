@@ -6,6 +6,7 @@ extern "C" {
 }
 
 #include "utils/float.h"
+#include "utils/numeric.h"
 
 #include "internal/float4.h"
 #include "internal/internal.h"
@@ -151,7 +152,6 @@ float4 pg_float4_in(char* num)
 PG_FUNCTION_INFO_V1(edb_float4_in);
 Datum edb_float4_in(PG_FUNCTION_ARGS) {
     float4 num = pg_float4_in(PG_GETARG_CSTRING(0));
-    
     return edb::edb_value_in((const char *)&num, sizeof(float4));
 }
 
@@ -159,9 +159,75 @@ PG_FUNCTION_INFO_V1(edb_float4_out);
 Datum edb_float4_out(PG_FUNCTION_ARGS) {
     bytea *data = PG_GETARG_BYTEA_PP(0);
     size_t data_size = VARSIZE_ANY_EXHDR(data);
+    char* str = (char*)palloc(32);
+    Datum data_out = edb::edb_value_out(VARDATA(data), data_size);
 
-    return edb::edb_value_out(VARDATA(data), data_size);
+
+    sprintf(str, "%f", *((float4 *)data_out));
+    pfree((char *)data_out);
+    PG_RETURN_CSTRING(str);
+    //return edb::edb_value_out(VARDATA(data), data_size);
 }
+
+PG_FUNCTION_INFO_V1(float4_to_edb_float4);
+Datum float4_to_edb_float4(PG_FUNCTION_ARGS) {
+    float4 num = PG_GETARG_FLOAT4(0);
+
+    return edb::edb_value_in((const char *)&num, sizeof(float4));
+}
+
+PG_FUNCTION_INFO_V1(double_to_edb_float4);
+Datum double_to_edb_float4(PG_FUNCTION_ARGS) {
+    float8 num = PG_GETARG_FLOAT8(0);
+    char	   *tmp;
+	Datum		result;
+
+	tmp = DatumGetCString(DirectFunctionCall1(float8out,
+											  Float8GetDatum(num)));
+	result = DirectFunctionCall1(edb_float4_in, CStringGetDatum(tmp));
+	pfree(tmp);
+    PG_RETURN_DATUM(result);
+}
+
+PG_FUNCTION_INFO_V1(numeric_to_edb_float4);
+Datum numeric_to_edb_float4(PG_FUNCTION_ARGS) {
+    Numeric num = PG_GETARG_NUMERIC(0);
+    char	   *tmp;
+	Datum		result;
+
+	tmp = DatumGetCString(DirectFunctionCall1(numeric_out,
+											  NumericGetDatum(num)));
+	result = DirectFunctionCall1(edb_float4_in, CStringGetDatum(tmp));
+	pfree(tmp);
+    PG_RETURN_DATUM(result);
+}
+
+PG_FUNCTION_INFO_V1(int4_to_edb_float4);
+Datum int4_to_edb_float4(PG_FUNCTION_ARGS) {
+    int32 num = PG_GETARG_INT32(0);
+    char	   *tmp;
+	Datum		result;
+
+	tmp = DatumGetCString(DirectFunctionCall1(int4out,
+											  Int32GetDatum(num)));
+	result = DirectFunctionCall1(edb_float4_in, CStringGetDatum(tmp));
+	pfree(tmp);
+    PG_RETURN_DATUM(result);
+}
+
+PG_FUNCTION_INFO_V1(int8_to_edb_float4);
+Datum int8_to_edb_float4(PG_FUNCTION_ARGS) {
+    int64 num = PG_GETARG_INT64(0);
+    char	   *tmp;
+	Datum		result;
+
+	tmp = DatumGetCString(DirectFunctionCall1(int8out,
+											  Int64GetDatum(num)));
+	result = DirectFunctionCall1(edb_float4_in, CStringGetDatum(tmp));
+	pfree(tmp);
+    PG_RETURN_DATUM(result);
+}
+
 #else
 PG_FUNCTION_INFO_V1(edb_float4_in);
 Datum edb_float4_in(PG_FUNCTION_ARGS) {
