@@ -85,6 +85,7 @@ int ecall_encrypt_value(uint8_t *input, size_t input_size, char *output) {
     printf("%s", debug_buffer);
 #endif
     memcpy(output, out, len);
+    free(out);
     return len;
 }
 
@@ -109,6 +110,7 @@ int ecall_decrypt_value(uint8_t *input, size_t input_size, char *output) {
     if(len <= 0)
         return len;
     memcpy(output, out, len);
+    free(out);
     return len;
 }
 
